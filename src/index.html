@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Food Desert — Is your neighbourhood making you fat?</title>
+  <meta name="description" content="Type your postcode. Find out what your neighbourhood is doing to your diet. Built on open UK government data." />
+  <meta property="og:title" content="Food Desert — Is your neighbourhood making you fat?" />
+  <meta property="og:description" content="Type your postcode. Find out what your neighbourhood is doing to your diet." />
+  <meta property="og:url" content="https://fooddesert.co.uk" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+  <div class="grain"></div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="wordmark">FOOD<span class="wordmark-accent">DESERT</span></div>
+      <nav class="header-nav">
+        <a href="#methodology">Methodology</a>
+        <a href="#about">About</a>
+        <a href="https://github.com/jbarronuk/fooddesert" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-eyebrow">
+        <span class="dot"></span>
+        <span>UK Food Environment Index</span>
+      </div>
+
+      <h1 class="hero-headline">
+        Is your<br />
+        <em>neighbourhood</em><br />
+        making you fat?
+      </h1>
+
+      <p class="hero-subhead">
+        The food outlets around you shape what you eat more than willpower ever will.
+        We mapped every rated food establishment in England using open government data
+        to score your local food environment.
+      </p>
+
+      <div class="postcode-form" id="postcode-form">
+        <label for="postcode" class="form-label">Enter your postcode</label>
+        <div class="form-row">
+          <input
+            type="text"
+            id="postcode"
+            name="postcode"
+            placeholder="e.g. E1 6RF"
+            maxlength="8"
+            autocomplete="postal-code"
+            spellcheck="false"
+          />
+          <button type="button" id="search-btn">
+            <span class="btn-text">Search</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+        <p class="form-note">England, Wales and Northern Ireland only for now. Sorry Scotland you opt for a FHIS rather than FHRS, it's coming though</p>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">500k+</span>
+          <span class="stat-label">food establishments mapped</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number">32,844</span>
+          <span class="stat-label">postcodes scored</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-number">0</span>
+          <span class="stat-label">data points sold</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPLAINER STRIP -->
+    <section class="explainer">
+      <div class="explainer-inner">
+        <p class="explainer-pull">
+          "Food deserts aren't about <em>distance</em> to a supermarket.
+          They're about what surrounds you every day."
+        </p>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="how-it-works" id="methodology">
+      <div class="section-inner">
+        <div class="section-label">How it works</div>
+        <h2 class="section-heading">The score is built from three signals</h2>
+
+        <div class="signals-grid">
+          <div class="signal">
+            <div class="signal-number">01</div>
+            <h3>Outlet composition</h3>
+            <p>We pull every FSA-rated food business within 800m of your postcode and classify them: supermarkets, takeaways, fast food, cafés, restaurants, convenience stores. The ratio matters.</p>
+          </div>
+          <div class="signal">
+            <div class="signal-number">02</div>
+            <h3>Hygiene baseline</h3>
+            <p>Average hygiene scores across all local establishments act as a proxy for food quality standards. Areas dominated by low-rated outlets correlate with worse dietary outcomes.</p>
+          </div>
+          <div class="signal">
+            <div class="signal-number">03</div>
+            <h3>Deprivation context</h3>
+            <p>We overlay the ONS Index of Multiple Deprivation to show whether your food environment is a cause or a symptom and where the structural problems actually sit.</p>
+          </div>
+        </div>
+
+        <div class="data-sources">
+          <div class="sources-label">Data sources</div>
+          <div class="sources-list">
+            <a href="https://ratings.food.gov.uk" target="_blank" rel="noopener" class="source-tag">FSA Hygiene Ratings API</a>
+            <a href="https://postcodes.io" target="_blank" rel="noopener" class="source-tag">Postcodes.io</a>
+            <a href="https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019" target="_blank" rel="noopener" class="source-tag">ONS Deprivation Index 2019</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINDINGS TEASER -->
+    <section class="findings">
+      <div class="section-inner">
+        <div class="section-label">Early findings</div>
+        <h2 class="section-heading">What the data already shows</h2>
+
+        <div class="findings-grid">
+          <div class="finding finding--large">
+            <div class="finding-stat">Percentage</div>
+            <div class="finding-text">of takeaways per capita in the most deprived decile vs the least deprived</div>
+          </div>
+          <div class="finding">
+            <div class="finding-stat">PostCode</div>
+            <div class="finding-text">Which postcodes score worst on outlet composition despite high population density</div>
+          </div>
+          <div class="finding">
+            <div class="finding-stat">Percentage</div>
+            <div class="finding-text">of postcodes rated "poor" have no full-service supermarket within 800m</div>
+          </div>
+        </div>
+
+        <p class="findings-caveat">
+          * Figures based on FSA data as of Q1 2025. Methodology is open source and peer-reviewable.
+          <a href="https://github.com/jbarronuk/fooddesert" target="_blank" rel="noopener">Read the code →</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about" id="about">
+      <div class="section-inner about-inner">
+        <div class="about-text">
+          <div class="section-label">About</div>
+          <h2 class="section-heading">Built in the open</h2>
+          <p>This is an independent project built on entirely open data. No venture funding, no data harvesting, no agenda beyond making government data legible to the people it describes.</p>
+          <p>The scoring methodology is documented, debatable, and improvable. If you think the weights are wrong, open a pull request.</p>
+          <a href="https://github.com/yourusername/fooddesert" class="cta-link" target="_blank" rel="noopener">
+            View source on GitHub →
+          </a>
+        </div>
+        <div class="about-aside">
+          <div class="aside-card">
+            <div class="aside-card-label">Tech stack</div>
+            <ul class="stack-list">
+              <li><span class="stack-tag">FSA API</span> establishment data</li>
+              <li><span class="stack-tag">Postcodes.io</span> geocoding</li>
+              <li><span class="stack-tag">ONS</span> deprivation index</li>
+              <li><span class="stack-tag">Cloudflare Pages</span> hosting</li>
+              <li><span class="stack-tag">Vanilla JS</span> no framework</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-wordmark">FOOD<span>DESERT</span></div>
+      <div class="footer-links">
+        <a href="#methodology">Methodology</a>
+        <a href="https://github.com/yourusername/fooddesert" target="_blank" rel="noopener">GitHub</a>
+        <a href="mailto:hello@fooddesert.co.uk">Contact</a>
+      </div>
+      <div class="footer-legal">
+        Built on open government data licensed under the Open Government Licence v3.0.
+        Not affiliated with the Food Standards Agency.
+      </div>
+    </div>
+  </footer>
+
+  <script src="scripts/main.js"></script>
+</body>
+</html>
