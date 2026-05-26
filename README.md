@@ -46,7 +46,7 @@ fooddesert/
 │   └── methodology.md      # Scoring methodology — open to PRs
 └── .github/
     └── workflows/
-        ├── deploy.yml      # Deploy main → Cloudflare Pages
+        ├── deploy.yml      # Deploy main - Cloudflare Pages - ensure root is /src
         └── preview.yml     # PR preview deployments
 ```
 
