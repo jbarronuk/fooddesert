@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -66,33 +66,38 @@ interface FsaApiResponse {
   };
 }
 
-interface EstablishmentRow {
-  fhrsid: number;
-  local_authority_business_id: string | null;
-  business_name: string | null;
-  business_type: string | null;
-  business_type_id: number | null;
-  rating_value: string | null;
-  rating_date: string | null;
-  rating_key: string | null;
-  address_line1: string | null;
-  address_line2: string | null;
-  address_line3: string | null;
-  address_line4: string | null;
-  post_code: string | null;
-  phone: string | null;
-  local_authority_code: string | null;
-  local_authority_name: string | null;
-  local_authority_email: string | null;
-  local_authority_website: string | null;
-  scheme_type: string | null;
-  new_rating_pending: boolean | null;
-  right_to_reply: string | null;
-  changes_by_server_id: number | null;
-  distance: number | null;
-  score_hygiene: number | null;
-  score_structural: number | null;
-  score_confidence_in_mgmt: number | null;
+interface UpsertParams {
+  p_fhrsid: number;
+  p_business_name: string | null;
+  p_business_type: string | null;
+  p_business_type_id: number | null;
+  p_address_line1: string | null;
+  p_address_line2: string | null;
+  p_address_line3: string | null;
+  p_address_line4: string | null;
+  p_post_code: string | null;
+  p_phone: string | null;
+  p_local_authority_code: string | null;
+  p_local_authority_name: string | null;
+  p_local_authority_business_id: string | null;
+  p_local_authority_email: string | null;
+  p_local_authority_website: string | null;
+  p_scheme_type: string | null;
+  p_rating_value: string | null;
+  p_rating_key: string | null;
+  p_rating_date: string | null;
+  p_new_rating_pending: boolean | null;
+  p_right_to_reply: string | null;
+  p_changes_by_server_id: number | null;
+  p_distance: number | null;
+  p_score_hygiene: number | null;
+  p_score_structural: number | null;
+  p_score_confidence_in_mgmt: number | null;
+  p_longitude: number | null;
+  p_latitude: number | null;
+}
+
+interface EstablishmentRow extends UpsertParams {
   longitude: number | null;
   latitude: number | null;
 }
@@ -133,7 +138,7 @@ async function fetchEstablishments(page: number): Promise<FsaEstablishment[] | n
     throw new Error(`FSA API error: ${response.status} ${response.statusText}`);
   }
 
-  const data: FsaApiResponse = await response.json();
+  const data = await response.json() as FsaApiResponse;
   console.log(`✓ Fetched ${data.establishments.length} establishments (page ${page} of ${data.meta.pageCount})`);
   console.log(`  Data version: ${data.meta.dataVersion}`);
 
@@ -145,37 +150,39 @@ async function fetchEstablishments(page: number): Promise<FsaEstablishment[] | n
 // ============================================================
 function mapToRow(e: FsaEstablishment): EstablishmentRow {
   const longitude = e.geocode?.longitude ? parseFloat(e.geocode.longitude) : null;
-  const latitude = e.geocode?.latitude ? parseFloat(e.geocode.latitude) : null;
+  const latitude  = e.geocode?.latitude  ? parseFloat(e.geocode.latitude)  : null;
 
   return {
-    fhrsid:                      e.FHRSID,
-    local_authority_business_id: e.LocalAuthorityBusinessID ?? null,
-    business_name:               e.BusinessName ?? null,
-    business_type:               e.BusinessType ?? null,
-    business_type_id:            e.BusinessTypeID ?? null,
-    rating_value:                e.RatingValue ?? null,
-    rating_date:                 e.RatingDate ?? null,
-    rating_key:                  e.RatingKey ?? null,
-    address_line1:               e.AddressLine1 ?? null,
-    address_line2:               e.AddressLine2 ?? null,
-    address_line3:               e.AddressLine3 ?? null,
-    address_line4:               e.AddressLine4 ?? null,
-    post_code:                   e.PostCode ?? null,
-    phone:                       e.Phone ?? null,
-    local_authority_code:        e.LocalAuthorityCode ?? null,
-    local_authority_name:        e.LocalAuthorityName ?? null,
-    local_authority_email:       e.LocalAuthorityEmailAddress ?? null,
-    local_authority_website:     e.LocalAuthorityWebSite ?? null,
-    scheme_type:                 e.SchemeType ?? null,
-    new_rating_pending:          e.NewRatingPending ?? null,
-    right_to_reply:              e.RightToReply ?? null,
-    changes_by_server_id:        e.ChangesByServerID ?? null,
-    distance:                    e.Distance ?? null,
-    score_hygiene:               e.scores?.Hygiene ?? null,
-    score_structural:            e.scores?.Structural ?? null,
-    score_confidence_in_mgmt:    e.scores?.ConfidenceInManagement ?? null,
-    longitude:                   longitude !== null && !isNaN(longitude) ? longitude : null,
-    latitude:                    latitude !== null && !isNaN(latitude) ? latitude : null,
+    p_fhrsid:                      e.FHRSID,
+    p_business_name:               e.BusinessName               ?? null,
+    p_business_type:               e.BusinessType               ?? null,
+    p_business_type_id:            e.BusinessTypeID             ?? null,
+    p_address_line1:               e.AddressLine1               ?? null,
+    p_address_line2:               e.AddressLine2               ?? null,
+    p_address_line3:               e.AddressLine3               ?? null,
+    p_address_line4:               e.AddressLine4               ?? null,
+    p_post_code:                   e.PostCode                   ?? null,
+    p_phone:                       e.Phone                      ?? null,
+    p_local_authority_code:        e.LocalAuthorityCode         ?? null,
+    p_local_authority_name:        e.LocalAuthorityName         ?? null,
+    p_local_authority_business_id: e.LocalAuthorityBusinessID   ?? null,
+    p_local_authority_email:       e.LocalAuthorityEmailAddress ?? null,
+    p_local_authority_website:     e.LocalAuthorityWebSite      ?? null,
+    p_scheme_type:                 e.SchemeType                 ?? null,
+    p_rating_value:                e.RatingValue                ?? null,
+    p_rating_key:                  e.RatingKey                  ?? null,
+    p_rating_date:                 e.RatingDate                 ?? null,
+    p_new_rating_pending:          e.NewRatingPending           ?? null,
+    p_right_to_reply:              e.RightToReply               ?? null,
+    p_changes_by_server_id:        e.ChangesByServerID          ?? null,
+    p_distance:                    e.Distance                   ?? null,
+    p_score_hygiene:               e.scores?.Hygiene            ?? null,
+    p_score_structural:            e.scores?.Structural         ?? null,
+    p_score_confidence_in_mgmt:    e.scores?.ConfidenceInManagement ?? null,
+    longitude:                     longitude !== null && !isNaN(longitude) ? longitude : null,
+    latitude:                      latitude  !== null && !isNaN(latitude)  ? latitude  : null,
+    p_longitude:                   longitude !== null && !isNaN(longitude) ? longitude : null,
+    p_latitude:                    latitude  !== null && !isNaN(latitude)  ? latitude  : null,
   };
 }
 
@@ -183,46 +190,47 @@ function mapToRow(e: FsaEstablishment): EstablishmentRow {
 // UPSERT TO SUPABASE IN BATCHES
 // ============================================================
 async function upsertBatch(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient,
   rows: EstablishmentRow[],
   batchNumber: number,
   totalBatches: number
 ): Promise<void> {
-  const promises = rows.map(row =>
-    supabase.rpc('upsert_establishment', {
-      p_fhrsid:                      row.fhrsid,
-      p_business_name:               row.business_name,
-      p_business_type:               row.business_type,
-      p_business_type_id:            row.business_type_id,
-      p_address_line1:               row.address_line1,
-      p_address_line2:               row.address_line2,
-      p_address_line3:               row.address_line3,
-      p_address_line4:               row.address_line4,
-      p_post_code:                   row.post_code,
-      p_phone:                       row.phone,
-      p_local_authority_code:        row.local_authority_code,
-      p_local_authority_name:        row.local_authority_name,
-      p_local_authority_business_id: row.local_authority_business_id,
-      p_local_authority_email:       row.local_authority_email,
-      p_local_authority_website:     row.local_authority_website,
-      p_scheme_type:                 row.scheme_type,
-      p_rating_value:                row.rating_value,
-      p_rating_key:                  row.rating_key,
-      p_rating_date:                 row.rating_date,
-      p_new_rating_pending:          row.new_rating_pending,
-      p_right_to_reply:              row.right_to_reply,
-      p_changes_by_server_id:        row.changes_by_server_id,
-      p_distance:                    row.distance,
-      p_score_hygiene:               row.score_hygiene,
-      p_score_structural:            row.score_structural,
-      p_score_confidence_in_mgmt:    row.score_confidence_in_mgmt,
-      p_longitude:                   row.longitude,
-      p_latitude:                    row.latitude,
-    })
-  );
+  const promises = rows.map(row => {
+    const params: UpsertParams = {
+      p_fhrsid:                      row.p_fhrsid,
+      p_business_name:               row.p_business_name,
+      p_business_type:               row.p_business_type,
+      p_business_type_id:            row.p_business_type_id,
+      p_address_line1:               row.p_address_line1,
+      p_address_line2:               row.p_address_line2,
+      p_address_line3:               row.p_address_line3,
+      p_address_line4:               row.p_address_line4,
+      p_post_code:                   row.p_post_code,
+      p_phone:                       row.p_phone,
+      p_local_authority_code:        row.p_local_authority_code,
+      p_local_authority_name:        row.p_local_authority_name,
+      p_local_authority_business_id: row.p_local_authority_business_id,
+      p_local_authority_email:       row.p_local_authority_email,
+      p_local_authority_website:     row.p_local_authority_website,
+      p_scheme_type:                 row.p_scheme_type,
+      p_rating_value:                row.p_rating_value,
+      p_rating_key:                  row.p_rating_key,
+      p_rating_date:                 row.p_rating_date,
+      p_new_rating_pending:          row.p_new_rating_pending,
+      p_right_to_reply:              row.p_right_to_reply,
+      p_changes_by_server_id:        row.p_changes_by_server_id,
+      p_distance:                    row.p_distance,
+      p_score_hygiene:               row.p_score_hygiene,
+      p_score_structural:            row.p_score_structural,
+      p_score_confidence_in_mgmt:    row.p_score_confidence_in_mgmt,
+      p_longitude:                   row.p_longitude,
+      p_latitude:                    row.p_latitude,
+    };
+    return supabase.rpc('upsert_establishment', params);
+  });
 
   const results = await Promise.all(promises);
-  const errors = results.filter(r => r.error);
+  const errors  = results.filter(r => r.error);
 
   if (errors.length > 0) {
     console.error(`  ✗ ${errors.length} errors in batch ${batchNumber}:`);
@@ -244,7 +252,7 @@ async function main() {
   }
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-    auth: { persistSession: false }
+    auth: { persistSession: false },
   });
 
   // 1. Read current page from state
@@ -254,7 +262,7 @@ async function main() {
   // 2. Fetch from FSA API
   const establishments = await fetchEstablishments(state.page);
 
-  // 3. Handle 404 — reset to page 1 and exit (next run will start fresh)
+  // 3. Handle 404 — reset to page 1 and exit
   if (establishments === null) {
     writeState({ page: 1 });
     console.log('Reset to page 1. Exiting — data will sync from page 1 on next run.');
@@ -264,8 +272,8 @@ async function main() {
   // 4. Map to DB rows
   const rows = establishments.map(mapToRow);
   console.log(`\nMapped ${rows.length} establishments to DB rows`);
-  console.log(`  With coordinates: ${rows.filter(r => r.latitude !== null).length}`);
-  console.log(`  Without coordinates: ${rows.filter(r => r.latitude === null).length}\n`);
+  console.log(`  With coordinates:    ${rows.filter(r => r.p_latitude !== null).length}`);
+  console.log(`  Without coordinates: ${rows.filter(r => r.p_latitude === null).length}\n`);
 
   // 5. Upsert in batches
   const batches: EstablishmentRow[][] = [];
