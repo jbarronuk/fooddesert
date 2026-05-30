@@ -2,15 +2,15 @@ name: FSA Establishments Sync
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Every day at 2am UTC
-  workflow_dispatch:      # Allow manual trigger from GitHub UI
+    - cron: '47 3 * * *'
+  workflow_dispatch:
 
 jobs:
   sync:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write     # Needed to commit state.json back to the repo
+      contents: write
 
     steps:
       - name: Checkout repository
